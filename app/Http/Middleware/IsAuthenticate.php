@@ -15,7 +15,7 @@ class IsAuthenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->authenticate) {
+        if (!$request->authenticated) {
             return redirect()->route('login');
         }
 

@@ -1,62 +1,31 @@
 <?php
 
+use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
-
-$movies = [];
-
-for ($i = 0; $i < 10; $i++) {
-    $movies[] = [
-        'title' => 'Movie ' . $i,
-        'year' => 2022,
-        'genre' => 'Action',
-    ];
-}
+use Illuminate\Http\Request;
 
 Route::get('/login', function () {
-    return 'Login Page';
+    return 'login page';
 })->name('login');
 
 Route::group([
     'middleware' => ['isAuth'],
     'prefix' => 'movie',
     'as' => 'movie.'
-], function () use ($movies) {
+], function () {
 
-    Route::get('/', function () use ($movies) {
-        return $movies;
-    });
-
-    Route::get('/{id}', function ($id) use ($movies) {
-        return $movies[$id];
-    })->middleware(['isMember']);
-
-    Route::post('', function () use ($movies) {
-        $movies[] = [
-            'title' => request('title'),
-            'year' => request('year'),
-            'genre' => request('genre'),
-        ];
-
-        return $movies;
-    });
-
-    Route::patch('/{id}', function ($id) use ($movies) {
-
-        $movies[$id]['title'] = request('title');
-        $movies[$id]['year'] = request('year');
-        $movies[$id]['genre'] = request('genre');
-
-        return $movies;
-    });
-
-    Route::delete('/{id}', function ($id) use ($movies) {
-
-        unset($movies[$id]);
-
-        return $movies;
-    });
+    Route::get('/', [MovieController::class, 'index']);
+    Route::get('/{id}', [MovieController::class, 'show'])->middleware(['isMember']);
+    Route::post('/', [MovieController::class, 'store']);
+    Route::put('/{id}', [MovieController::class, 'update']);
+    Route::patch('/{id}', [MovieController::class, 'update']);
+    Route::delete('/{id}', [MovieController::class, 'destroy']);
 
     Route::get('/pricing', function () {
         return 'please buy a membership to view this page';
     });
+});
+
+Route::get('/request', function(Request $request) {
+    dd($request);
 });
